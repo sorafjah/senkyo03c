@@ -134,14 +134,15 @@
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            border: 3px solid #667eea;
+            border: none;              /* ← 青い枠を消す */
             border-radius: 5px;
             color: #667eea;
+            background: white;
         }
 
         .number-input:focus {
-            outline: none;
-            border-color: #667eea;
+            outline: none;             /* ← フォーカス時の枠も消す */
+            border-color: transparent; /* ← 念のため */
         }
 
         .unit {
@@ -173,7 +174,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            border: 3px solid #667eea;
+            border: none; /* ← グラフ周りの青い枠を消す */
         }
 
         .bar-segment {
