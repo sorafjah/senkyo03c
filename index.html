@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選挙シミュレーター - 1票の大切さを学ぼう</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            background: #f0f4ff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+        }
+
+        .control-group.turnout-group {
+            background: #f0f4ff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .control-group.turnout-group label {
+            font-size: 16px;
+            color: #667eea;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arrow-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #e8ecff;
+            color: #999;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .arrow-btn:hover {
+            background: #d9dfff;
+        }
+
+        .arrow-btn:active {
+            transform: scale(0.95);
+        }
+
+        .number-input {
+            width: 90px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #667eea;
+            border-radius: 5px;
+            color: #667eea;
+        }
+
+        .number-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .unit {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .chart-container {
+            margin: 40px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .bar-chart {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bar-segment {
+            height: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .no-vote {
+            background: #bbb;
+        }
+
+        .party-a {
+            background: #ff6b6b;
+        }
+
+        .party-b {
+            background: #4ecdc4;
+        }
+
+        .party-c {
+            background: #ffe66d;
+            color: #333;
+        }
+
+        .message {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff9e6;
+            border-left: 4px solid #ffd700;
+            border-radius: 5px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .message strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .bar-segment {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗳️ 選挙シミュレーター</h1>
+        <p class="subtitle">1票の大切さを学ぼう</p>
+
+        <div class="info-box">
+            <p>
+                全部で<strong>1000人</strong>の有権者がいます。<br>
+                投票率を変えたり、各党への投票数を変えたりして、選挙結果がどう変わるか見てみましょう！
+            </p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group turnout-group">
+                <label>📊 投票率</label>
+                <div class="input-container">
+                    <button class="arrow-btn" onclick="changeTurnout(-1)">▽</button>
+                    <input type="number" id="turnout-input" class="number-input" min="0" max="100" value="50">
+                    <span class="unit">%</span>
+                    <button class="arrow-btn" onclick="changeTurnout(1)">△</button>
+                </div>
+            </div>
+
+            <div class="control-group party-a">
+                <label>🔴 A党</label>
+                <div class="input-container">
+                    <button class="arrow-btn" onclick="changeParty('a', -1)">▽</button>
+                    <input type="number" id="party-a-input" class="number-input" min="0" max="1000" value="200">
+                    <span class="unit">人</span>
+                    <button class="arrow-btn" onclick="changeParty('a', 1)">△</button>
+                </div>
+            </div>
+
+            <div class="control-group party-b">
+                <label>🔵 B党</label>
+                <div class="input-container">
+                    <button class="arrow-btn" onclick="changeParty('b', -1)">▽</button>
+                    <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
+                    <span class="unit">人</span>
+                    <button class="arrow-btn" onclick="changeParty('b', 1)">△</button>
+                </div>
+            </div>
+
+            <div class="control-group party-c">
+                <label>🟡 C党</label>
+                <div class="input-container">
+                    <button class="arrow-btn" onclick="changeParty('c', -1)">▽</button>
+                    <input type="number" id="party-c-input" class="number-input" min="0" max="1000" value="125">
+                    <span class="unit">人</span>
+                    <button class="arrow-btn" onclick="changeParty('c', 1)">△</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">選挙結果（全1000人中）</div>
+            <div class="bar-chart" id="chart">
+                <div class="bar-segment no-vote" id="no-vote-bar">500人</div>
+                <div class="bar-segment party-a" id="party-a-bar">200人</div>
+                <div class="bar-segment party-b" id="party-b-bar">175人</div>
+                <div class="bar-segment party-c" id="party-c-bar">125人</div>
+            </div>
+        </div>
+
+        <div class="message" id="message">
+            投票率が<strong>50%</strong>だと、1000人のうち500人しか投票していません。<br>
+            つまり、<strong>半分の人の意見だけ</strong>で政治が決まってしまいます。<br>
+            あなたの1票で結果が変わるかもしれません！
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_VOTERS = 1000;
+
+        const turnoutInput = document.getElementById('turnout-input');
+        const partyAInput = document.getElementById('party-a-input');
+        const partyBInput = document.getElementById('party-b-input');
+        const partyCInput = document.getElementById('party-c-input');
+
+        const noVoteBar = document.getElementById('no-vote-bar');
+        const partyABar = document.getElementById('party-a-bar');
+        const partyBBar = document.getElementById('party-b-bar');
+        const partyCBar = document.getElementById('party-c-bar');
+
+        const message = document.getElementById('message');
+
+        function changeTurnout(direction) {
+            let currentValue = parseInt(turnoutInput.value) || 0;
+            currentValue = Math.max(0, Math.min(100, currentValue + direction));
+            turnoutInput.value = currentValue;
+            updateFromTurnout();
+        }
+
+        function changeParty(party, direction) {
+            let input;
+            if (party === 'a') input = partyAInput;
+            else if (party === 'b') input = partyBInput;
+            else input = partyCInput;
+
+            let currentValue = parseInt(input.value) || 0;
+            currentValue = Math.max(0, Math.min(TOTAL_VOTERS, currentValue + direction));
+            input.value = currentValue;
+            updateFromParties();
+        }
+
+        function updateFromTurnout() {
+            const turnoutPercent = parseInt(turnoutInput.value) || 0;
+            const totalVotes = Math.round(TOTAL_VOTERS * turnoutPercent / 100);
+            
+            // 現在の投票数の比率を保ったまま調整
+            const currentA = parseInt(partyAInput.value) || 0;
+            const currentB = parseInt(partyBInput.value) || 0;
+            const currentC = parseInt(partyCInput.value) || 0;
+            const currentTotal = currentA + currentB + currentC;
+
+            if (currentTotal > 0) {
+                partyAInput.value = Math.round(totalVotes * currentA / currentTotal);
+                partyBInput.value = Math.round(totalVotes * currentB / currentTotal);
+                partyCInput.value = totalVotes - parseInt(partyAInput.value) - parseInt(partyBInput.value);
+            } else {
+                partyAInput.value = Math.round(totalVotes * 0.4);
+                partyBInput.value = Math.round(totalVotes * 0.35);
+                partyCInput.value = totalVotes - parseInt(partyAInput.value) - parseInt(partyBInput.value);
+            }
+
+            updateChart();
+        }
+
+        function updateFromParties() {
+            const partyAVotes = parseInt(partyAInput.value) || 0;
+            const partyBVotes = parseInt(partyBInput.value) || 0;
+            const partyCVotes = parseInt(partyCInput.value) || 0;
+            const totalVotes = partyAVotes + partyBVotes + partyCVotes;
+
+            // 投票率を更新
+            const newTurnout = Math.min(100, Math.round((totalVotes / TOTAL_VOTERS) * 100));
+            turnoutInput.value = newTurnout;
+
+            updateChart();
+        }
+
+        function updateChart() {
+            const partyAVotes = parseInt(partyAInput.value) || 0;
+            const partyBVotes = parseInt(partyBInput.value) || 0;
+            const partyCVotes = parseInt(partyCInput.value) || 0;
+            const totalVotes = partyAVotes + partyBVotes + partyCVotes;
+            const noVote = TOTAL_VOTERS - totalVotes;
+            const turnoutPercent = parseInt(turnoutInput.value) || 0;
+
+            // グラフを更新
+            noVoteBar.style.width = `${(noVote / TOTAL_VOTERS) * 100}%`;
+            partyABar.style.width = `${(partyAVotes / TOTAL_VOTERS) * 100}%`;
+            partyBBar.style.width = `${(partyBVotes / TOTAL_VOTERS) * 100}%`;
+            partyCBar.style.width = `${(partyCVotes / TOTAL_VOTERS) * 100}%`;
+
+            // グラフ内のテキスト
+            noVoteBar.textContent = noVote > 50 ? `${noVote}人` : '';
+            partyABar.textContent = partyAVotes > 50 ? `${partyAVotes}人` : '';
+            partyBBar.textContent = partyBVotes > 50 ? `${partyBVotes}人` : '';
+            partyCBar.textContent = partyCVotes > 50 ? `${partyCVotes}人` : '';
+
+            // 当選政党を判定
+            const votes = [
+                { party: 'A党', votes: partyAVotes, color: '🔴' },
+                { party: 'B党', votes: partyBVotes, color: '🔵' },
+                { party: 'C党', votes: partyCVotes, color: '🟡' }
+            ];
+            votes.sort((a, b) => b.votes - a.votes);
+            
+            const winner = votes[0];
+            const second = votes[1];
+            const third = votes[2];
+
+            // メッセージを更新
+            let messageText = '';
+            
+            if (totalVotes === 0) {
+                messageText = `投票した人が誰もいません！<br>
+                    これでは選挙になりません。<strong>必ず投票に行きましょう！</strong>`;
+            } else {
+                // 当選結果
+                messageText = `<strong style="font-size: 18px;">${winner.color} ${winner.party}が当選しました！（${winner.votes}票）</strong><br><br>`;
+                
+                // 基本メッセージ
+                if (turnoutPercent < 30) {
+                    messageText += `投票率が<strong>${turnoutPercent}%</strong>しかありません。
+                        1000人のうち<strong>たった${totalVotes}人</strong>の意見だけで政治が決まってしまいました。<br>`;
+                } else if (turnoutPercent < 50) {
+                    messageText += `投票率が<strong>${turnoutPercent}%</strong>です。
+                        1000人のうち${totalVotes}人しか投票していません。
+                        <strong>半分以下の人の意見だけ</strong>で決まってしまいました。<br>`;
+                } else if (turnoutPercent < 70) {
+                    messageText += `投票率が<strong>${turnoutPercent}%</strong>です。
+                        1000人のうち${totalVotes}人が投票しています。
+                        まずまずですが、${noVote}人が投票していません。<br>`;
+                } else if (turnoutPercent < 90) {
+                    messageText += `投票率が<strong>${turnoutPercent}%</strong>です。素晴らしい！
+                        1000人のうち${totalVotes}人が投票しています。
+                        多くの人の声が反映される、とても<strong>健全な民主主義</strong>です。<br>`;
+                } else {
+                    messageText += `投票率が<strong>${turnoutPercent}%</strong>です。完璧！
+                        ほぼ全員が投票に参加しています。
+                        これこそが<strong>理想的な民主主義</strong>の姿です。<br>`;
+                }
+
+                // 投票しなかった人への分析
+                if (noVote > 0 && winner.votes > 0) {
+                    const votesNeededForSecond = winner.votes - second.votes + 1;
+                    const votesNeededForThird = winner.votes - third.votes + 1;
+                    
+                    messageText += `<br><strong>📌 重要！</strong><br>`;
+                    
+                    if (votesNeededForSecond <= noVote) {
+                        const percentage = Math.round((votesNeededForSecond / noVote) * 100);
+                        messageText += `投票しなかった${noVote}人のうち、<strong>たった${votesNeededForSecond}人（${percentage}%）</strong>が${second.color} ${second.party}に投票していれば、${second.party}が当選できました！<br>`;
+                    }
+                    
+                    if (votesNeededForThird <= noVote && votesNeededForThird !== votesNeededForSecond) {
+                        const percentage = Math.round((votesNeededForThird / noVote) * 100);
+                        messageText += `投票しなかった${noVote}人のうち、<strong>${votesNeededForThird}人（${percentage}%）</strong>が${third.color} ${third.party}に投票していれば、${third.party}が当選できました！<br>`;
+                    }
+                    
+                    if (votesNeededForSecond <= noVote || votesNeededForThird <= noVote) {
+                        messageText += `<br><strong>あなたの1票が結果を変えるかもしれません！</strong>`;
+                    }
+                }
+            }
+
+            message.innerHTML = messageText;
+        }
+
+        // イベントリスナーを追加
+        turnoutInput.addEventListener('input', updateFromTurnout);
+        partyAInput.addEventListener('input', updateFromParties);
+        partyBInput.addEventListener('input', updateFromParties);
+        partyCInput.addEventListener('input', updateFromParties);
+
+        // 初期表示
+        updateChart();
+    </script>
+</body>
+</html>
