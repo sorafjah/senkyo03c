@@ -239,6 +239,84 @@
             color: #667eea;
         }
 
+        /* ===== UI調整：単位を枠内へ／矢印を右に縦配置／数値は黒 ===== */
+        .control-group,
+        .parties-row .control-group,
+        .input-container {
+            min-width: 0;
+        }
+
+        .input-container {
+            gap: 10px;
+        }
+
+        .input-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* 数字・%・人 は黒 */
+        .number-input {
+            width: 100%;
+            padding-right: 34px; /* suffix用 */
+            color: #333 !important;
+        }
+
+        .number-input.readonly {
+            color: #333 !important;
+        }
+
+        .suffix {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            pointer-events: none;
+        }
+
+        .stepper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 0 0 auto;
+        }
+
+        .arrow-btn {
+            width: 28px;
+            height: 18px;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* それぞれの色味 */
+        .control-group.turnout-group .arrow-btn {
+            background: rgba(102, 126, 234, 0.22);
+            color: #667eea;
+        }
+
+        .control-group.party-a .arrow-btn {
+            background: rgba(255, 107, 107, 0.22);
+            color: #ff6b6b;
+        }
+
+        .control-group.party-b .arrow-btn {
+            background: rgba(78, 205, 196, 0.22);
+            color: #1c8f87;
+        }
+
+        .control-group.party-c .arrow-btn {
+            background: rgba(255, 230, 109, 0.55);
+            color: #333;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -279,52 +357,68 @@
             <div class="control-group turnout-group">
                 <label>📊 投票率</label>
                 <div class="input-container">
-                    <button class="arrow-btn" onclick="changeTurnout(-1)">▽</button>
-                    <input type="number" id="turnout-input" class="number-input" min="0" max="100" value="50">
-                    <span class="unit">%</span>
-                    <button class="arrow-btn" onclick="changeTurnout(1)">△</button>
+                    <div class="input-wrap">
+                        <input type="number" id="turnout-input" class="number-input" min="0" max="100" value="50">
+                        <span class="suffix">%</span>
+                    </div>
+                    <div class="stepper">
+                        <button class="arrow-btn" onclick="changeTurnout(1)">△</button>
+                        <button class="arrow-btn" onclick="changeTurnout(-1)">▽</button>
+                    </div>
                 </div>
             </div>
 
             <div class="parties-row">
-                <!-- ★ 追加：不投票（A党の左） -->
+                <!-- 不投票（矢印なし） -->
                 <div class="control-group no-vote-control">
                     <label>⚪ 投票しなかった</label>
                     <div class="input-container">
-                        <button class="arrow-btn" disabled style="opacity:0.4; cursor:not-allowed;">▽</button>
-                        <input type="number" id="no-vote-input" class="number-input readonly" value="500" readonly>
-                        <span class="unit">人</span>
-                        <button class="arrow-btn" disabled style="opacity:0.4; cursor:not-allowed;">△</button>
+                        <div class="input-wrap">
+                            <input type="number" id="no-vote-input" class="number-input readonly" value="500" readonly>
+                            <span class="suffix">人</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="control-group party-a">
                     <label>🔴 A党</label>
                     <div class="input-container">
-                        <button class="arrow-btn" onclick="changeParty('a', -1)">▽</button>
-                        <input type="number" id="party-a-input" class="number-input" min="0" max="1000" value="200">
-                        <span class="unit">人</span>
-                        <button class="arrow-btn" onclick="changeParty('a', 1)">△</button>
+                        <div class="input-wrap">
+                            <input type="number" id="party-a-input" class="number-input" min="0" max="1000" value="200">
+                            <span class="suffix">人</span>
+                        </div>
+                        <div class="stepper">
+                            <button class="arrow-btn" onclick="changeParty('a', 1)">△</button>
+                            <button class="arrow-btn" onclick="changeParty('a', -1)">▽</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="control-group party-b">
                     <label>🔵 B党</label>
                     <div class="input-container">
-                        <button class="arrow-btn" onclick="changeParty('b', -1)">▽</button>
-                        <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
-                        <span class="unit">人</span>
-                        <button class="arrow-btn" onclick="changeParty('b', 1)">△</button>
+                        <div class="input-wrap">
+                            <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
+                            <span class="suffix">人</span>
+                        </div>
+                        <div class="stepper">
+                            <button class="arrow-btn" onclick="changeParty('b', 1)">△</button>
+                            <button class="arrow-btn" onclick="changeParty('b', -1)">▽</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="control-group party-c">
                     <label>🟡 C党</label>
                     <div class="input-container">
-                        <button class="arrow-btn" onclick="changeParty('c', -1)">▽</button>
-                        <input type="number" id="party-c-input" class="number-input" min="0" max="1000" value="125">
-                        <span class="unit">人</span>
-                        <button class="arrow-btn" onclick="changeParty('c', 1)">△</button>
+                        <div class="input-wrap">
+                            <input type="number" id="party-c-input" class="number-input" min="0" max="1000" value="125">
+                            <span class="suffix">人</span>
+                        </div>
+                        <div class="stepper">
+                            <button class="arrow-btn" onclick="changeParty('c', 1)">△</button>
+                            <button class="arrow-btn" onclick="changeParty('c', -1)">▽</button>
+                        </div>
                     </div>
                 </div>
             </div>
