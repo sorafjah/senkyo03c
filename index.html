@@ -128,27 +128,46 @@
             transform: scale(0.95);
         }
 
+        /* 数字入力欄：枠なし */
         .number-input {
             width: 90px;
             height: 40px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            border: none;              /* ← 青い枠を消す */
+            border: none;
             border-radius: 5px;
             color: #667eea;
             background: white;
         }
 
         .number-input:focus {
-            outline: none;             /* ← フォーカス時の枠も消す */
-            border-color: transparent; /* ← 念のため */
+            outline: none;
+            border-color: transparent;
+        }
+
+        /* 読み取り専用（不投票）を少し控えめに */
+        .number-input.readonly {
+            color: #666;
         }
 
         .unit {
             font-size: 20px;
             font-weight: bold;
             color: #667eea;
+        }
+
+        /* 不投票の表示ブロック */
+        .no-vote-control {
+            background: #f5f5f5;
+        }
+
+        .no-vote-control label {
+            color: #666;
+        }
+
+        .no-vote-control .unit {
+            color: #666;
         }
 
         .chart-container {
@@ -174,16 +193,17 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            border: none; /* ← グラフ周りの青い枠を消す */
+            border: none;
         }
 
+        /* グラフ内の文字を黒（C党と同じ） */
         .bar-segment {
             height: 100%;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #333;
             font-weight: bold;
             font-size: 22px;
         }
@@ -267,6 +287,17 @@
             </div>
 
             <div class="parties-row">
+                <!-- ★ 追加：不投票（A党の左） -->
+                <div class="control-group no-vote-control">
+                    <label>⚪ 投票しなかった</label>
+                    <div class="input-container">
+                        <button class="arrow-btn" disabled style="opacity:0.4; cursor:not-allowed;">▽</button>
+                        <input type="number" id="no-vote-input" class="number-input readonly" value="500" readonly>
+                        <span class="unit">人</span>
+                        <button class="arrow-btn" disabled style="opacity:0.4; cursor:not-allowed;">△</button>
+                    </div>
+                </div>
+
                 <div class="control-group party-a">
                     <label>🔴 A党</label>
                     <div class="input-container">
@@ -323,6 +354,7 @@
         const partyAInput = document.getElementById('party-a-input');
         const partyBInput = document.getElementById('party-b-input');
         const partyCInput = document.getElementById('party-c-input');
+        const noVoteInput = document.getElementById('no-vote-input');
 
         const noVoteBar = document.getElementById('no-vote-bar');
         const partyABar = document.getElementById('party-a-bar');
@@ -393,6 +425,9 @@
             const totalVotes = partyAVotes + partyBVotes + partyCVotes;
             const noVote = TOTAL_VOTERS - totalVotes;
             const turnoutPercent = parseInt(turnoutInput.value) || 0;
+
+            // ★ 不投票人数（A党の左の表示）を更新
+            noVoteInput.value = noVote;
 
             // グラフを更新
             noVoteBar.style.width = `${(noVote / TOTAL_VOTERS) * 100}%`;
