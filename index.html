@@ -59,12 +59,27 @@
             margin-bottom: 30px;
         }
 
+        .controls {
+            margin-bottom: 30px;
+        }
+
+        .parties-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
         .control-group {
             margin-bottom: 15px;
             background: #f0f4ff;
             padding: 10px 12px;
             border-radius: 8px;
             border: 1px solid #e8e8e8;
+        }
+
+        .parties-row .control-group {
+            flex: 1;
+            margin-bottom: 0;
         }
 
         .control-group.turnout-group {
@@ -136,28 +151,29 @@
         }
 
         .chart-container {
-            margin: 40px 0;
-            padding: 20px;
+            margin: 50px 0;
+            padding: 30px;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
         }
 
         .chart-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             color: #333;
         }
 
         .bar-chart {
             width: 100%;
-            height: 80px;
+            height: 120px;
             display: flex;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            border: 3px solid #667eea;
         }
 
         .bar-segment {
@@ -168,7 +184,7 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 22px;
         }
 
         .no-vote {
@@ -212,7 +228,16 @@
             }
 
             .bar-segment {
-                font-size: 12px;
+                font-size: 16px;
+            }
+
+            .parties-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .parties-row .control-group {
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -240,33 +265,35 @@
                 </div>
             </div>
 
-            <div class="control-group party-a">
-                <label>🔴 A党</label>
-                <div class="input-container">
-                    <button class="arrow-btn" onclick="changeParty('a', -1)">▽</button>
-                    <input type="number" id="party-a-input" class="number-input" min="0" max="1000" value="200">
-                    <span class="unit">人</span>
-                    <button class="arrow-btn" onclick="changeParty('a', 1)">△</button>
+            <div class="parties-row">
+                <div class="control-group party-a">
+                    <label>🔴 A党</label>
+                    <div class="input-container">
+                        <button class="arrow-btn" onclick="changeParty('a', -1)">▽</button>
+                        <input type="number" id="party-a-input" class="number-input" min="0" max="1000" value="200">
+                        <span class="unit">人</span>
+                        <button class="arrow-btn" onclick="changeParty('a', 1)">△</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="control-group party-b">
-                <label>🔵 B党</label>
-                <div class="input-container">
-                    <button class="arrow-btn" onclick="changeParty('b', -1)">▽</button>
-                    <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
-                    <span class="unit">人</span>
-                    <button class="arrow-btn" onclick="changeParty('b', 1)">△</button>
+                <div class="control-group party-b">
+                    <label>🔵 B党</label>
+                    <div class="input-container">
+                        <button class="arrow-btn" onclick="changeParty('b', -1)">▽</button>
+                        <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
+                        <span class="unit">人</span>
+                        <button class="arrow-btn" onclick="changeParty('b', 1)">△</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="control-group party-c">
-                <label>🟡 C党</label>
-                <div class="input-container">
-                    <button class="arrow-btn" onclick="changeParty('c', -1)">▽</button>
-                    <input type="number" id="party-c-input" class="number-input" min="0" max="1000" value="125">
-                    <span class="unit">人</span>
-                    <button class="arrow-btn" onclick="changeParty('c', 1)">△</button>
+                <div class="control-group party-c">
+                    <label>🟡 C党</label>
+                    <div class="input-container">
+                        <button class="arrow-btn" onclick="changeParty('c', -1)">▽</button>
+                        <input type="number" id="party-c-input" class="number-input" min="0" max="1000" value="125">
+                        <span class="unit">人</span>
+                        <button class="arrow-btn" onclick="changeParty('c', 1)">△</button>
+                    </div>
                 </div>
             </div>
         </div>
