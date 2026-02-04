@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>選挙シミュレーター - 1票の大切さを学ぼう</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
@@ -28,19 +24,8 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        h1 {
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
+        h1 { text-align: center; color: #667eea; margin-bottom: 10px; font-size: 28px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 16px; }
 
         .info-box {
             background: #f0f4ff;
@@ -49,19 +34,9 @@
             margin-bottom: 30px;
             border-radius: 5px;
         }
+        .info-box p { line-height: 1.6; color: #555; }
 
-        .info-box p {
-            line-height: 1.6;
-            color: #555;
-        }
-
-        .controls {
-            margin-bottom: 30px;
-        }
-
-        .controls {
-            margin-bottom: 30px;
-        }
+        .controls { margin-bottom: 30px; }
 
         .parties-row {
             display: flex;
@@ -73,20 +48,19 @@
             margin-bottom: 15px;
             background: #f0f4ff;
             padding: 10px 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid #e8e8e8;
         }
 
-        .parties-row .control-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
+        .parties-row .control-group { flex: 1; margin-bottom: 0; }
 
+        /* 投票率：幅を短くして中央寄せ */
         .control-group.turnout-group {
             background: #f0f4ff;
             padding: 15px;
-            margin-bottom: 20px;
-            border: none;
+            margin: 0 auto 20px;      /* 中央寄せ */
+            border: 1px solid #e8e8e8;
+            max-width: 360px;          /* ★ここで短く */
         }
 
         .control-group label {
@@ -97,78 +71,91 @@
             font-size: 16px;
         }
 
-        .control-group.turnout-group label {
-            font-size: 16px;
-            color: #667eea;
-        }
+        .control-group.turnout-group label { font-size: 16px; color: #667eea; }
 
         .input-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .arrow-btn {
             width: 28px;
-            height: 28px;
+            height: 18px;
             border: none;
             background: #e8ecff;
             color: #999;
-            font-size: 14px;
-            border-radius: 4px;
+            font-size: 12px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
-
-        .arrow-btn:hover {
-            background: #d9dfff;
-        }
-
-        .arrow-btn:active {
-            transform: scale(0.95);
-        }
+        .arrow-btn:hover { background: #d9dfff; }
+        .arrow-btn:active { transform: scale(0.95); }
 
         /* 数字入力欄：枠なし */
         .number-input {
-            width: 90px;
+            width: 100%;
             height: 40px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
             border: none;
-            border-radius: 5px;
-            color: #667eea;
+            border-radius: 8px;
+            color: #333 !important;
             background: white;
+            padding-right: 34px; /* suffix用 */
         }
+        .number-input:focus { outline: none; border-color: transparent; }
+        .number-input.readonly { color: #333 !important; }
 
-        .number-input:focus {
-            outline: none;
-            border-color: transparent;
-        }
-
-        /* 読み取り専用（不投票）を少し控えめに */
-        .number-input.readonly {
-            color: #666;
-        }
-
-        .unit {
-            font-size: 20px;
+        .input-wrap { position: relative; flex: 1; min-width: 0; }
+        .suffix {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
             font-weight: bold;
-            color: #667eea;
+            color: #333;
+            pointer-events: none;
         }
 
-        /* 不投票の表示ブロック */
+        .stepper { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+
+        /* 不投票の表示ブロック（枠線だけ） */
         .no-vote-control {
-            background: #f5f5f5;
+            background: #fff;
+            border-width: 2px;
+            border-color: #bbb;
         }
+        .no-vote-control label { color: #666; }
 
-        .no-vote-control label {
-            color: #666;
+        /* ===== ここが要望：塗りつぶしではなく「枠線だけ」 ===== */
+        .control-group.party-a,
+        .control-group.party-b,
+        .control-group.party-c {
+            background: #fff;          /* 白背景 */
+            border-width: 2px;         /* 枠を太め */
         }
+        .control-group.party-a { border-color: #ff6b6b; }
+        .control-group.party-b { border-color: #4ecdc4; }
+        .control-group.party-c { border-color: #ffe66d; }
 
-        .no-vote-control .unit {
-            color: #666;
-        }
+        /* ラベルもそれぞれの色味に */
+        .control-group.party-a label { color: #ff6b6b; }
+        .control-group.party-b label { color: #1c8f87; }
+        .control-group.party-c label { color: #b59a00; }
+
+        /* 矢印の色味（既存の“それぞれの色味”を維持） */
+        .control-group.turnout-group .arrow-btn { background: rgba(102, 126, 234, 0.22); color: #667eea; }
+        .control-group.party-a .arrow-btn { background: rgba(255, 107, 107, 0.22); color: #ff6b6b; }
+        .control-group.party-b .arrow-btn { background: rgba(78, 205, 196, 0.22); color: #1c8f87; }
+        .control-group.party-c .arrow-btn { background: rgba(255, 230, 109, 0.55); color: #333; }
 
         .chart-container {
             margin: 50px 0;
@@ -196,7 +183,6 @@
             border: none;
         }
 
-        /* グラフ内の文字を黒（C党と同じ） */
         .bar-segment {
             height: 100%;
             transition: all 0.3s ease;
@@ -208,22 +194,10 @@
             font-size: 22px;
         }
 
-        .no-vote {
-            background: #bbb;
-        }
-
-        .party-a {
-            background: #ff6b6b;
-        }
-
-        .party-b {
-            background: #4ecdc4;
-        }
-
-        .party-c {
-            background: #ffe66d;
-            color: #333;
-        }
+        .no-vote { background: #bbb; }
+        .party-a { background: #ff6b6b; }
+        .party-b { background: #4ecdc4; }
+        .party-c { background: #ffe66d; color: #333; }
 
         .message {
             margin-top: 25px;
@@ -234,117 +208,21 @@
             line-height: 1.8;
             color: #555;
         }
-
-        .message strong {
-            color: #667eea;
-        }
-
-        /* ===== UI調整：単位を枠内へ／矢印を右に縦配置／数値は黒 ===== */
-        .control-group,
-        .parties-row .control-group,
-        .input-container {
-            min-width: 0;
-        }
-
-        .input-container {
-            gap: 10px;
-        }
-
-        .input-wrap {
-            position: relative;
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* 数字・%・人 は黒 */
-        .number-input {
-            width: 100%;
-            padding-right: 34px; /* suffix用 */
-            color: #333 !important;
-        }
-
-        .number-input.readonly {
-            color: #333 !important;
-        }
-
-        .suffix {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            pointer-events: none;
-        }
-
-        .stepper {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 0 0 auto;
-        }
-
-        .arrow-btn {
-            width: 28px;
-            height: 18px;
-            border-radius: 6px;
-            font-size: 12px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* それぞれの色味 */
-        .control-group.turnout-group .arrow-btn {
-            background: rgba(102, 126, 234, 0.22);
-            color: #667eea;
-        }
-
-        .control-group.party-a .arrow-btn {
-            background: rgba(255, 107, 107, 0.22);
-            color: #ff6b6b;
-        }
-
-        .control-group.party-b .arrow-btn {
-            background: rgba(78, 205, 196, 0.22);
-            color: #1c8f87;
-        }
-
-        .control-group.party-c .arrow-btn {
-            background: rgba(255, 230, 109, 0.55);
-            color: #333;
-        }
+        .message strong { color: #667eea; }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .bar-segment {
-                font-size: 16px;
-            }
-
-            .parties-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .parties-row .control-group {
-                margin-bottom: 10px;
-            }
+            .container { padding: 20px; }
+            h1 { font-size: 24px; }
+            .bar-segment { font-size: 16px; }
+            .parties-row { flex-direction: column; gap: 10px; }
+            .parties-row .control-group { margin-bottom: 10px; }
+            .control-group.turnout-group { max-width: 100%; } /* スマホは全幅 */
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🗳️ 選挙シミュレーター</h1>
-        <p class="subtitle">1票の大切さを学ぼう</p>
 
         <div class="info-box">
             <p>
@@ -395,7 +273,7 @@
                 </div>
 
                 <div class="control-group party-b">
-                    <label>🔵 B党</label>
+                    <label>🟢 B党</label>
                     <div class="input-container">
                         <div class="input-wrap">
                             <input type="number" id="party-b-input" class="number-input" min="0" max="1000" value="175">
@@ -437,7 +315,7 @@
         <div class="message" id="message">
             投票率が<strong>50%</strong>だと、1000人のうち500人しか投票していません。<br>
             つまり、<strong>半分の人の意見だけ</strong>で政治が決まってしまいます。<br>
-            あなたの1票で結果が変わるかもしれません！
+            あなたの1票が未来を変える！
         </div>
     </div>
 
@@ -479,8 +357,7 @@
         function updateFromTurnout() {
             const turnoutPercent = parseInt(turnoutInput.value) || 0;
             const totalVotes = Math.round(TOTAL_VOTERS * turnoutPercent / 100);
-            
-            // 現在の投票数の比率を保ったまま調整
+
             const currentA = parseInt(partyAInput.value) || 0;
             const currentB = parseInt(partyBInput.value) || 0;
             const currentC = parseInt(partyCInput.value) || 0;
@@ -505,7 +382,6 @@
             const partyCVotes = parseInt(partyCInput.value) || 0;
             const totalVotes = partyAVotes + partyBVotes + partyCVotes;
 
-            // 投票率を更新
             const newTurnout = Math.min(100, Math.round((totalVotes / TOTAL_VOTERS) * 100));
             turnoutInput.value = newTurnout;
 
@@ -520,44 +396,37 @@
             const noVote = TOTAL_VOTERS - totalVotes;
             const turnoutPercent = parseInt(turnoutInput.value) || 0;
 
-            // ★ 不投票人数（A党の左の表示）を更新
             noVoteInput.value = noVote;
 
-            // グラフを更新
             noVoteBar.style.width = `${(noVote / TOTAL_VOTERS) * 100}%`;
             partyABar.style.width = `${(partyAVotes / TOTAL_VOTERS) * 100}%`;
             partyBBar.style.width = `${(partyBVotes / TOTAL_VOTERS) * 100}%`;
             partyCBar.style.width = `${(partyCVotes / TOTAL_VOTERS) * 100}%`;
 
-            // グラフ内のテキスト
             noVoteBar.textContent = noVote > 50 ? `${noVote}人` : '';
             partyABar.textContent = partyAVotes > 50 ? `${partyAVotes}人` : '';
             partyBBar.textContent = partyBVotes > 50 ? `${partyBVotes}人` : '';
             partyCBar.textContent = partyCVotes > 50 ? `${partyCVotes}人` : '';
 
-            // 当選政党を判定
             const votes = [
                 { party: 'A党', votes: partyAVotes, color: '🔴' },
-                { party: 'B党', votes: partyBVotes, color: '🔵' },
+                { party: 'B党', votes: partyBVotes, color: '🟢' },
                 { party: 'C党', votes: partyCVotes, color: '🟡' }
             ];
             votes.sort((a, b) => b.votes - a.votes);
-            
+
             const winner = votes[0];
             const second = votes[1];
             const third = votes[2];
 
-            // メッセージを更新
             let messageText = '';
-            
+
             if (totalVotes === 0) {
                 messageText = `投票した人が誰もいません！<br>
                     これでは選挙になりません。<strong>必ず投票に行きましょう！</strong>`;
             } else {
-                // 当選結果
                 messageText = `<strong style="font-size: 18px;">${winner.color} ${winner.party}が当選しました！（${winner.votes}票）</strong><br><br>`;
-                
-                // 基本メッセージ
+
                 if (turnoutPercent < 30) {
                     messageText += `投票率が<strong>${turnoutPercent}%</strong>しかありません。
                         1000人のうち<strong>たった${totalVotes}人</strong>の意見だけで政治が決まってしまいました。<br>`;
@@ -579,25 +448,24 @@
                         これこそが<strong>理想的な民主主義</strong>の姿です。<br>`;
                 }
 
-                // 投票しなかった人への分析
                 if (noVote > 0 && winner.votes > 0) {
                     const votesNeededForSecond = winner.votes - second.votes + 1;
                     const votesNeededForThird = winner.votes - third.votes + 1;
-                    
+
                     messageText += `<br><strong>📌 重要！</strong><br>`;
-                    
+
                     if (votesNeededForSecond <= noVote) {
                         const percentage = Math.round((votesNeededForSecond / noVote) * 100);
                         messageText += `投票しなかった${noVote}人のうち、<strong>たった${votesNeededForSecond}人（${percentage}%）</strong>が${second.color} ${second.party}に投票していれば、${second.party}が当選できました！<br>`;
                     }
-                    
+
                     if (votesNeededForThird <= noVote && votesNeededForThird !== votesNeededForSecond) {
                         const percentage = Math.round((votesNeededForThird / noVote) * 100);
                         messageText += `投票しなかった${noVote}人のうち、<strong>${votesNeededForThird}人（${percentage}%）</strong>が${third.color} ${third.party}に投票していれば、${third.party}が当選できました！<br>`;
                     }
-                    
+
                     if (votesNeededForSecond <= noVote || votesNeededForThird <= noVote) {
-                        messageText += `<br><strong>あなたの1票が結果を変えるかもしれません！</strong>`;
+                        messageText += `<br><strong>あなたの1票が未来を変える！</strong>`;
                     }
                 }
             }
@@ -605,13 +473,11 @@
             message.innerHTML = messageText;
         }
 
-        // イベントリスナーを追加
         turnoutInput.addEventListener('input', updateFromTurnout);
         partyAInput.addEventListener('input', updateFromParties);
         partyBInput.addEventListener('input', updateFromParties);
         partyCInput.addEventListener('input', updateFromParties);
 
-        // 初期表示
         updateChart();
     </script>
 </body>
